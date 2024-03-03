@@ -58,3 +58,24 @@ Here the Big O becomes n^2. Sequential operations (+) and nested (x).
     - The other terms become more insignificant with scale and when ploting a graph it comes closer to a `n^2`
 
 
+## Space Complexity
+Spaitial complexity determines how memory allocation will scale.
+
+### Rules for spatial complexity
+The following contribute to spatial complexty.
+
+1. Varaible.
+2. Data Structures.
+3. Function calls.
+4. Allocations.
+
+eg: O(n)
+```
+def arrayOfHiNTimes(n):
+    hiArray = [] # O(1)
+    for i in range(len(n)): # O(1)
+        hiArray[i] = "hi" # O(n)
+    return hiArray
+```
+
+
