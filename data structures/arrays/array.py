@@ -1,52 +1,54 @@
 
 class DoubleNode:
-    first = None
-    last = None
+    head = None
+    tail = None
     data = None
 
-    def __init__(self, data, first) -> None:
+    def __init__(self, data, first = None, last = None) -> None:
         self.data = data
-        self.first = first
+        self.head = first
+        self.tail = last
 class SingleNode:
     tail = None
     data = None
 
-    def __init__(self, data) -> None:
+    def __init__(self, data, tail = None) -> None:
         self.data = data
-
+        self.tail = tail
 
 class LinkedList():
     head  = None
+    length = 0
 
-    def __getNode(self, index):
+    def getNode(self, index):
         item = self.head
         if(item == None):
             return None
         for x in range(index):
-            if(item.last == None):
+            if(item.tail == None):
                 return None
             else:
-                item = item.last
+                item = item.tail
         return  item
     
-    def __changeLength(self,op):
+    def changeLength(self,op):
         if(op == '+'):
             self.length +=1
         else:
             self.length -=1
 
 
-    def __getLast(self):
+    def getLast(self):
         if(self.head == None):
             None
         else:
             lastNode = self.head
-            while( lastNode.last != None):
-                lastNode = lastNode.last
+            while( lastNode.tail != None):
+                lastNode = lastNode.tail
             return lastNode
         
     def get(self,index):
-        item = self.__getNode(index)
+        item = self.getNode(index)
         if(item == None):
             return None
         return   item.data
@@ -64,213 +66,172 @@ class LinkedList():
         pass
     
 
-class DoubleLinkedList:
-    length = 0
-    firstNode = None
-
-    def __init__(self):
-        pass
+class SingleLinkedList(LinkedList):
 
 
-    def __getNode(self, index):
-        item = self.firstNode
-        if(item == None):
-            return None
-        for x in range(index):
-            if(item.last == None):
-                return None
-            else:
-                item = item.last
-        return  item
-    
-    def __changeLength(self,op):
-        if(op == '+'):
-            self.length +=1
-        else:
-            self.length -=1
-
-    def __getLast(self):
-        if(self.firstNode == None):
-            None
-        else:
-            lastNode = self.firstNode
-            while( lastNode.last != None):
-                lastNode = lastNode.last
-            return lastNode
-        
     def get(self,index):
-        item = self.__getNode(index)
+        item = self.getNode(index)
         if(item == None):
             return None
         return   item.data
     
-
-    
     def push(self,data):
-        self.__changeLength("+")
-        if(self.firstNode == None):
-            self.firstNode = DoubleNode(data, None)
-        else:
-            lastNode = self.__getLast()
-            newItem = DoubleNode(data, lastNode)
-            lastNode.last = newItem
+        newNone = SingleNode(data)
+        self.changeLength('+')
+        if(self.head == None):
+            self.head = newNone
+            return True
+
+        item = self.getLast()
+        item.tail =  newNone
+        
+        return True
+        
 
     def pop(self):
-        lastNode = self.__getLast()
-        if(lastNode != None):
-            first = lastNode.first
-            last = lastNode.last
-            if(first == None and last == None):
-                self.firstNode = None
-            elif(first != None and last == None):
-                first.last = None
-            elif(first == None and last != None):
-                self.firstNode = lastNode.last
-            self.__changeLength("-")
-            return lastNode.data
+        if(self.head == None):
+           return None
+        elif(self.head.tail == None):
+           data = self.head.data
+           self.head = None
+           return data
+
+        item = self.head
+        prev = None
+        while(item.tail != None):
+            prev = item
+            item = item.tail
+        prev.tail = None
+        self.changeLength('-')
+        return item.data
             
-        else:
-            return None
     
     def splice(self,index):
-        item = self.__getNode(index)
-        if(item == None):
+        if(index >= self.length or self.head == None):
             return None
+        self.changeLength('-')
+        item = self.head
+        prev = self.head.tail
+        for x in range(index):
+            prev = item
+            item = item.tail
+
+        if(prev == None and item.tail == None):
+            data = self.head.data
+            self.head = None
+            return data
         
-        first = item.first
-        last = item.last
-        if(first == None and last == None):
-            self.firstNode = None
-        elif(first != None and last == None):
-            first.last = None
-        elif(first == None and last != None):
-            self.firstNode = item.last
-        else:
-            first.last = last
-            last.first = first
-        
-        self.__changeLength("-")
+        prev.tail = item.tail
+        item.tail = None
         return item.data
+
+        
     
     def insert(self,index, value):
-        item = self.__getNode(index)
-        newNode = DoubleNode(value, None)
-        if(item == None):
-            if(index == 0):
-                self.firstNode = newNode
-                return newNode.data
-            elif(index == self.length):
-                last = self.__getLast()
-                last.last = newNode
-                newNode.first = last
-            return None
+        if(index >= self.length or self.head == None):
+            return False
+        newNode = SingleNode(value)
+        self.changeLength('+')
+        if(index == 0):
+            newNode.tail = self.head
+            self.head = newNode
+            return True
         
-        first = item.first
-        last = item.last
-        if(first == None):
-            self.firstNode.first = newNode
-            newNode.last = self.firstNode
-            self.firstNode = newNode
-        elif(first != None and last == None):
-            first.last = newNode
-            newNode.last = item
-            item.first = newNode
-        else:
-            newNode.first = first
-            first.last = newNode
-            newNode.last = item
-            item.first = newNode
-        
-        self.__changeLength("+")
-        return newNode.data
-    
-    
-    
-
-class SingleLinkedList:
-    length = 0
-    firstNode = None
-
-    def __init__(self):
-        pass
-
-
-    def __getNode(self, index):
-        item = self.firstNode
+        item = self.head
+        prev = None
         for x in range(index):
-            if(item.last == None):
-                return None
-            else:
-                item = item.last
-        return  item
-    
-    def __changeLength(self,op):
-        if(op == '+'):
-            self.length +=1
-        else:
-            self.length -=1
-
-    def __getLast(self):
-        if(self.firstNode == None):
-            None
-        else:
-            lastNode = self.firstNode
-            while( lastNode.last != None):
-                lastNode = lastNode.last
-            return lastNode
+            prev = item
+            item = item.tail
         
+        prev.tail = newNode
+        newNode.tail = item
+        return True
+
+
+class DoubleLinkedList(LinkedList):
+
+
     def get(self,index):
-        item = self.__getNode(index)
+        item = self.getNode(index)
         if(item == None):
             return None
         return   item.data
     
-
-    
     def push(self,data):
-        self.__changeLength("+")
-        if(self.firstNode == None):
-            self.firstNode = SingleNode(data)
-        else:
-            lastNode = self.__getLast()
-            newItem = SingleNode(data)
-            lastNode.tail = newItem
+        newNone = DoubleNode(data)
+        self.changeLength('+')
+        if(self.head == None):
+            self.head = newNone
+            return True
+
+        item = self.getLast()
+        item.tail =  newNone
+        newNone.head = item
+        return True
+        
 
     def pop(self):
-        lastNode = self.__getLast()
-        if(lastNode != None):
-            last = lastNode.tail
-            if(last == None):
-                self.firstNode = None
-            elif(first != None and last == None):
-                first.last = None
-            elif(first == None and last != None):
-                self.firstNode = lastNode.last
-            self.__changeLength("-")
-            return lastNode.data
+        if(self.head == None):
+           return None
+        elif(self.head.tail == None):
+           data = self.head.data
+           self.head = None
+           return data
+
+        item = self.head
+        while(item.tail != None):
+            item = item.tail
+
+        item.head.tail = None
+        self.changeLength('-')
+        return item.data
             
-        else:
-            return None
     
     def splice(self,index):
-        item = self.__getNode(index)
-        if(item == None):
+        if(index >= self.length or self.head == None):
             return None
+        self.changeLength('-')
+        item = self.head
+        for x in range(index):
+            item = item.tail
+
+        if(item.head == None and item.tail == None):
+            data = self.head.data
+            self.head = None
+            return data
         
-        first = item.first
-        last = item.last
-        if(first == None and last == None):
-            self.firstNode = None
-        elif(first != None and last == None):
-            first.last = None
-        elif(first == None and last != None):
-            self.firstNode = item.last
-        else:
-            first.last = last
-            last.first = first
-        
-        self.__changeLength("-")
+        item.head.tail = item.tail
+        if(item.tail != None):
+            item.tail.head = item.head
         return item.data
+
+        
+    
+    def insert(self,index, value):
+        if(index >= self.length or self.head == None):
+            return False
+        newNode = DoubleNode(value)
+        self.changeLength('+')
+        if(index == 0):
+            newNode.tail = self.head
+            self.head.head = newNode
+            self.head = newNode
+            return True
+        
+        item = self.head
+        for x in range(index):
+            item = item.tail
+        
+        item.head.tail = newNode
+        item.head = newNode
+        newNode.tail = item
+        return True
+
+    
+    
+
+
+    
         
     
 test = DoubleLinkedList()
@@ -280,7 +241,7 @@ test.push("c")
 
 print(test.length)
 print(test.get(2))
-test.pop()
+print(test.pop())
 
 print(test.length)
 
@@ -294,7 +255,6 @@ print(test.pop())
 print(test.pop())
 print(test.pop())
 print(test.length)
-print(test.insert(0,2))
 test.push("a")
 test.push("b")
 test.push("c")
@@ -307,10 +267,10 @@ print(test.get(1))
 
 print('====== Printing list items =====')
 
-item = test.firstNode
+item = test.head
 while(item != None):
     print(item.data)
-    item = item.last
+    item = item.tail
 
 
 
