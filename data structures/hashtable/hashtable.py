@@ -78,7 +78,6 @@ class HashTable:
 
 def firstRecurringCharacter(arr):
     chrMap = {}
-
     for ele in arr:
         print(chrMap)
         if(chrMap.get(ele)):
